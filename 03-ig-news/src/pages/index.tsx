@@ -1,8 +1,10 @@
 import { GetStaticProps } from 'next';
 import Head from 'next/head';
+import Image from 'next/image';
 import { SubscribeButton } from '../components/SubscribeButton';
 import { stripe } from '../services/stripe';
 
+import avatarImg from '../../public/images/avatar.svg';
 import styles from './home.module.scss';
 
 interface HomeProps {
@@ -18,7 +20,7 @@ export default function Home({ product }: HomeProps) {
       <Head>
         <title>Home | ig.news</title>
       </Head>
-      
+
       <main className={styles.contentContainer}>
         <section className={styles.hero}>
           <span>👋🏼 Hey, welcome</span>
@@ -30,7 +32,7 @@ export default function Home({ product }: HomeProps) {
           <SubscribeButton priceId={product.priceId} />
         </section>
 
-        <img src="/images/avatar.svg" alt="girl coding" />
+        <Image src={avatarImg} alt="girl coding" />
       </main>
     </>
   )
