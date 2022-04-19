@@ -1,3 +1,5 @@
+import Head from 'next/head';
+
 import { Button, Flex, Stack } from '@chakra-ui/react';
 
 import { Input } from '../components/Form/Input';
@@ -5,6 +7,10 @@ import { Input } from '../components/Form/Input';
 export default function SingIn() {
   return (
     <Flex w="100vw" h="100vh" align="center" justify="center">
+      <Head>
+        <title>dashgo. | Login</title>
+      </Head>
+
       <Flex
         as="form"
         width="100%"
