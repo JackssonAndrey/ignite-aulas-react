@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react';
 
 import { Input } from '../../components/Form/Input';
-import { Header } from '../../components/Header';
+import { Index } from '../../components/Header';
 import { Sidebar } from '../../components/Sidebar';
 
 export default function CreateUser() {
@@ -22,7 +22,7 @@ export default function CreateUser() {
         <title>dashgo. | Criar usuário</title>
       </Head>
 
-      <Header />
+      <Index />
 
       <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
         <Sidebar />
