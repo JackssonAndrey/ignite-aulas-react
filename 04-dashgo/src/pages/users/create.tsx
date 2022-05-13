@@ -1,6 +1,8 @@
 import Head from 'next/head';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { useMutation } from 'react-query';
 import * as yup from 'yup';
 
 import {
@@ -18,6 +20,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Input } from '../../components/Form/Input';
 import { Header } from '../../components/Header';
 import { Sidebar } from '../../components/Sidebar';
+import { api } from '../../services/axios/api';
+import { queryClient } from '../../services/queryClient';
 
 type CreateUserFormData = {
   name: string;
@@ -37,16 +41,32 @@ const createUserFormSchema = yup.object().shape({
 });
 
 export default function CreateUser() {
+  const router = useRouter();
+  const createUser = useMutation(
+    async (user: CreateUserFormData) => {
+      await api.post('users', {
+        user: {
+          ...user,
+          created_at: new Date(),
+        },
+      });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('users');
+      },
+    }
+  );
   const { register, handleSubmit, formState } = useForm({
     resolver: yupResolver(createUserFormSchema),
   });
   const { errors } = formState;
 
   const handleCreateUser: SubmitHandler<CreateUserFormData> = async (values) => {
-    // eslint-disable-next-line no-promise-executor-return
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-
-    console.log(values);
+    await createUser.mutateAsync(values);
+    setTimeout(() => {
+      router.push('/users');
+    }, 3000);
   };
 
   return (
@@ -114,7 +134,11 @@ export default function CreateUser() {
               <Link href="/users" passHref>
                 <Button colorScheme="whiteAlpha">Cancelar</Button>
               </Link>
-              <Button colorScheme="pink" type="submit" isLoading={formState.isSubmitting}>
+              <Button
+                colorScheme={createUser.isSuccess === true ? 'green' : 'pink'}
+                type="submit"
+                isLoading={formState.isSubmitting}
+              >
                 Salvar
               </Button>
             </HStack>

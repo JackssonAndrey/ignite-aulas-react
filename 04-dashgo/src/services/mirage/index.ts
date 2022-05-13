@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { createServer, Factory, Model } from 'miragejs';
+import { ActiveModelSerializer, createServer, Factory, Model, Response } from 'miragejs';
 
 import faker from '@faker-js/faker';
 
@@ -12,6 +12,10 @@ type User = {
 
 export function makeServer() {
   return createServer({
+    serializers: {
+      application: ActiveModelSerializer,
+    },
+
     models: {
       user: Model.extend<Partial<User>>({}),
     },
@@ -31,15 +35,28 @@ export function makeServer() {
     },
 
     seeds(server) {
-      server.createList('user', 15);
+      server.createList('user', 100);
     },
 
     routes() {
       this.namespace = 'api';
       this.timing = 750;
 
-      this.get('/users');
+      // eslint-disable-next-line func-names
+      this.get('/users', function (schema, request) {
+        // eslint-disable-next-line camelcase
+        const { page = 1, per_page = 10 } = request.queryParams;
+        const total = schema.all('user').length;
+
+        const pageStart = (Number(page) - 1) * Number(per_page);
+        const pageEnd = pageStart + Number(per_page);
+
+        const users = this.serialize(schema.all('user')).users.slice(pageStart, pageEnd);
+
+        return new Response(200, { 'x-total-count': String(total) }, { users });
+      });
       this.post('/users');
+      this.get('/users/:id');
 
       this.namespace = '';
       this.passthrough();
