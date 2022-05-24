@@ -1,4 +1,4 @@
-import { SearchResultItem } from './SearchResultItem';
+import { ProductItem } from './ProductItem';
 
 interface SearchResultsProps {
   results: Array<{
@@ -13,7 +13,7 @@ export function SearchResults({ results }: SearchResultsProps) {
     <div>
       {results.map(product => {
         return (
-          <SearchResultItem product={product} key={product.id} />
+          <ProductItem product={product} key={product.id} />
         )
       })}
     </div>
